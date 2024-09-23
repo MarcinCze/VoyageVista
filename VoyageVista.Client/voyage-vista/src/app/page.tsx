@@ -1,5 +1,6 @@
 'use client';
 import Hero from '../components/hero/Hero';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Index() {
   return (
