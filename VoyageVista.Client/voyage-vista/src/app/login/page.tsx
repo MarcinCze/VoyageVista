@@ -1,31 +1,53 @@
 'use client';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation'
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+
+interface LoginFormData {
+    user: string;
+    password: string;
+}
 
 export default function Login() {
 
-    const [isLoading, setLoading] = useState(false);
+    const router = useRouter();
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const [user, setUser] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [showAlert, setShowAlert] = useState(false);
 
-    useEffect(() => {
-        async function fetchUserData() {
-            try {
-              const response = await fetch('http://example.com/user');
-              const data = await response.json();
-              console.log('User data:', data);
-            } catch (error) {
-              console.error('Error fetching user data:', error);
-            } finally {
-              setLoading(false); // Set loading to false when the request completes
+    const handleClick = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        const loginData: LoginFormData = { user, password };
+
+        try {
+            const response = await fetch('http://localhost:3001/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log(response);
+                console.log(result);
+                router.push('/dashboard');
+            } else {
+                setShowAlert(true);
+                setLoading(false);
+                console.log(response);
             }
-          }
-
-        if (isLoading) {
-            fetchUserData();
+        } catch (error) {
+            console.error('Error:', error);
+            setLoading(false);
+            setShowAlert(true);
         }
-    }, [isLoading]);
-
-    const handleClick = () => setLoading(true);
+    }
 
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100">
@@ -42,19 +64,24 @@ export default function Login() {
                         <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                     </div>
 
-                    <Form>
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                        <Alert.Heading>Login failed</Alert.Heading>
+                        <p>Oops! Looks like something went wrong. Please double-check your username and password, and try again!</p>
+                    </Alert>
+
+                    <Form onSubmit={handleClick}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" />
+                            <Form.Control type="email" placeholder="Enter email" onChange={(e) => setUser(e.target.value)} />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" />
+                            <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" className="w-100" disabled={isLoading} onClick={!isLoading ? handleClick : undefined}>
-                            {isLoading ? 'Loading…' : 'Click to load'}
+                        <Button variant="primary" type="submit" className="w-100" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Log in'}
                         </Button>
                     </Form>
 
