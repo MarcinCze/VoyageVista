@@ -36,7 +36,7 @@ export default function Login() {
                 const result = await response.json();
                 console.log(response);
                 console.log(result);
-                router.push('/dashboard');
+                router.push('/main/dashboard');
             } else {
                 setShowAlert(true);
                 setLoading(false);

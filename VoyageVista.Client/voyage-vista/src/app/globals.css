@@ -40,3 +40,11 @@ a {
     color-scheme: dark;
   }
 }
+
+.nav-link.active {
+  background-color: #007bff; /* Keep your active background color */
+  color: white !important;  /* Keep your text color white */
+  border-radius: 10px;      /* Make the background more rounded */
+  padding: 10px;            /* Add padding to make the area larger */
+  font-weight: bold;
+}
