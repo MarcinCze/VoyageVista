@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
-
+import { GlobalStateProvider } from '@/context/GlobalStateProvider';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,15 +26,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
 
-        <Container fluid>
-          {children}
-        </Container>
-
+        <GlobalStateProvider>
+          <Container fluid>
+            {children}
+          </Container>
+        </GlobalStateProvider>
+        
       </body>
     </html>
   );
